@@ -22,6 +22,10 @@ Update-Module PSKerb
 
 ## Usage
 
+This module includes functionality for both the Kerberos Client and Kerberos Key Distribution Center (KDC).
+
+However, the KDC functions are only exported if the machine is a Domain Controller.
+
 ### Get-KerbConfig
 
 Display the current Microsoft Windows Kerberos client configuration.
@@ -52,3 +56,20 @@ ClientIpAddresses        False
 TgtRenewalTime           600 seconds
 AllowTgtSessionKey       False
 ```
+
+### Get-KdcConfig
+
+Display the current Microsoft Windows Kerberos KDC configuration
+
+```powershell
+Name                           Setting
+----                           -------
+KdcUseClientAddresses          False
+KdcDontCheckAddresses          True
+NewConnectionTimeout           10 seconds
+MaxDatagramReplySize           1465 bytes
+KdcExtraLogLevel               PKINIT
+DefaultDomainSupportedEncTypes RC4, AES-SK
+```
+
+These modules both include the `Set` and `Clear` verb to adjust the settings.
