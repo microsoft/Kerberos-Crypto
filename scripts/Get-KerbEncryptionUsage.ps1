@@ -70,7 +70,7 @@ enum RequestType {
 }
 
 class KerbRequest {
-    hidden [int]$RecordId
+    hidden [long]$RecordId
     [string]$MachineName
     [DateTime]$Time
     [string]$Requestor
@@ -80,7 +80,7 @@ class KerbRequest {
     [EncryptionType]$Ticket
     [EncryptionType]$SessionKey
 
-    KerbRequest([int]$id, [string]$m, [datetime]$tc, [string]$r, [string]$s, [string]$t, [RequestType]$rt, [EncryptionType]$te, [EncryptionType]$se) {
+    KerbRequest([long]$id, [string]$m, [datetime]$tc, [string]$r, [string]$s, [string]$t, [RequestType]$rt, [EncryptionType]$te, [EncryptionType]$se) {
         $this.RecordId = $id
         $this.MachineName = $m
         $this.Time = $tc

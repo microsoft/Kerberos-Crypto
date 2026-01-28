@@ -50,14 +50,14 @@ enum AccountType {
 }
 
 class Account {
-    hidden [int]$RecordId
+    hidden [long]$RecordId
     [string]$MachineName
     [datetime]$Time
     [string]$Name
     [AccountType]$Type
     [string]$Keys
 
-    Account([int]$id, [string]$m, [datetime]$tc, [string]$name, [AccountType]$ct, [string]$ckeys) {
+    Account([long]$id, [string]$m, [datetime]$tc, [string]$name, [AccountType]$ct, [string]$ckeys) {
         $this.RecordId = $id
         $this.MachineName = $m
         $this.Time = $tc
