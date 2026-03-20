@@ -38,6 +38,11 @@ param(
     On Windows Server 2025+, the keys are called out individually.
 #>
 
+if ($psISE) {
+    Write-Error "Running this script in PowerShell ISE is not supported."
+    return
+}
+
 # AES-SHA1 on 2022-
 $script:AES_SHA1_FILTER_2022 = "AES-SHA1"
 #AES-SHA1 on 2025+

@@ -39,6 +39,11 @@ param(
     [string]$EncryptionUsage = "Either"
 )
 
+if ($psISE) {
+    Write-Error "Running this script in PowerShell ISE is not supported."
+    return
+}
+
 #region Classes
 class EncryptionType {
     [string]$Name
