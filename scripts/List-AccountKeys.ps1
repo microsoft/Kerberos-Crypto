@@ -2,7 +2,7 @@
 .SYNOPSIS
 Retrieves the observed Account Key types
 .DESCRIPTION
-Searches the Security Event Logs for intstances of Event Id 4769 and Event Id 4768 to determine which account keys are used.
+Searches the Security Event Logs for instances of Event Id 4769 and Event Id 4768 to determine which account keys are used.
 
 .EXAMPLE
 List-AccountKeys # This will list all accounts and their key types found in the past 90 days
