@@ -47,6 +47,11 @@ if ($psISE) {
 $script:AES_SHA1_FILTER_2022 = "AES-SHA1"
 #AES-SHA1 on 2025+
 $script:AES_SHA1_FILTER_2025 = "SHA96"
+$script:AES_SHA1_FILTER = if ([Environment]::OSVersion.Version.Build -ge 26100) {
+     $script:AES_SHA1_FILTER_2025
+ } else {
+    $script:AES_SHA1_FILTER_2022
+ }
 
 enum AccountType {
     User

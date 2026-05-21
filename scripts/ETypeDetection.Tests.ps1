@@ -286,7 +286,6 @@ Describe 'List-AccountKeys.ps1' {
 
         $result = List-AccountKeys
         $result.Count | Should -Be 1
-        Write-Host $result[0].Keys
         $result[0].Keys | Should -Match "RC4"
         $result[0].Keys | Should -Match "AES128-SHA96"
         $result[0].Keys | Should -Match "AES256-SHA96"
@@ -321,5 +320,89 @@ Describe 'List-AccountKeys.ps1' {
 
         $script:count | Should -Be 3
         $results.Count | Should -Be 5
+    }
+
+    Context 'ContainsKeyType filtering on Server 2022 (AES-SHA1 filter)' {
+        BeforeAll {
+            $script:OriginalAESFilter = $script:AES_SHA1_FILTER
+            $script:AES_SHA1_FILTER = $script:AES_SHA1_FILTER_2022
+        }
+
+        BeforeEach {
+            $script:KeyFilter = ""
+            $script:NotKeyFilter = ""
+        }
+
+        AfterAll {
+            $script:AES_SHA1_FILTER = $script:OriginalAESFilter
+        }
+
+        It 'should return events whose account supported keys contain AES-SHA1' {
+            Mock Get-WinEvent {
+                return $script:AES_4769_EVENT, $script:RC4_4769_EVENT
+            }
+
+            $results = List-AccountKeys -ContainsKeyType "AES-SHA1"
+            $results.Count | Should -Be 2
+            $results | ForEach-Object {
+                $_.Keys | Should -Match "AES"
+            }
+        }
+
+        It 'should exclude events whose account supported keys contain AES-SHA1' {
+            Mock Get-WinEvent {
+                return $script:AES_4769_EVENT, $script:RC4_4769_EVENT
+            }
+
+            $results = List-AccountKeys -NotContainsKeyType "AES-SHA1"
+            $results.Count | Should -Be 0
+        }
+    }
+
+    Context 'ContainsKeyType filtering on Server 2025 (SHA96 filter)' {
+        BeforeAll {
+            $script:OriginalAESFilter = $script:AES_SHA1_FILTER
+            $script:AES_SHA1_FILTER = $script:AES_SHA1_FILTER_2025
+        }
+
+        BeforeEach {
+            $script:KeyFilter = ""
+            $script:NotKeyFilter = ""
+        }
+
+        AfterAll {
+            $script:AES_SHA1_FILTER = $script:OriginalAESFilter
+        }
+
+        It 'should return events whose account supported keys contain SHA96 in new format' {
+            Mock Get-WinEvent {
+                return $script:4769_NEW_FORMAT
+            }
+
+            $results = List-AccountKeys -ContainsKeyType "AES-SHA1"
+            $results.Count | Should -Be 1
+            $results[0].Keys | Should -Match "AES128-SHA96"
+            $results[0].Keys | Should -Match "AES256-SHA96"
+        }
+
+        It 'should exclude events whose account supported keys contain SHA96' {
+            Mock Get-WinEvent {
+                return $script:4769_NEW_FORMAT
+            }
+
+            $results = List-AccountKeys -NotContainsKeyType "AES-SHA1"
+            $results.Count | Should -Be 0
+        }
+
+        It 'should not match old-format AES-SHA1 string when filter is SHA96' {
+            # On 2025, old-format "AES-SHA1" events do NOT contain "SHA96",
+            # so they should be excluded by ContainsKeyType "AES-SHA1"
+            Mock Get-WinEvent {
+                return $script:AES_4769_EVENT
+            }
+
+            $results = List-AccountKeys -ContainsKeyType "AES-SHA1"
+            $results.Count | Should -Be 0
+        }
     }
 }
