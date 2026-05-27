@@ -172,6 +172,18 @@ BeforeAll {
         return $script:KDCs
     }
 
+    function Copy-TestEventWithAccountKeys {
+        param(
+            [object]$Event,
+            [string]$AccountKeys
+        )
+
+        $copy = $Event.PSObject.Copy()
+        $copy.Properties = @($Event.Properties | ForEach-Object { @{ Value = $_.Value } })
+        $copy.Properties[16].Value = $AccountKeys
+        return $copy
+    }
+
 }
 
 
@@ -356,6 +368,22 @@ Describe 'List-AccountKeys.ps1' {
 
             $results = List-AccountKeys -NotContainsKeyType "AES-SHA1"
             $results.Count | Should -Be 0
+        }
+
+        It 'should keep filtering after the first record is excluded' {
+            $rc4OnlyEvent = Copy-TestEventWithAccountKeys $script:AES_4769_EVENT "RC4"
+
+            Mock Get-WinEvent {
+                return $rc4OnlyEvent, $script:AES_4769_EVENT
+            }
+
+            $containsResults = List-AccountKeys -ContainsKeyType "AES-SHA1"
+            $containsResults.Count | Should -Be 1
+            $containsResults[0].Keys | Should -Match "AES"
+
+            $notContainsResults = List-AccountKeys -NotContainsKeyType "AES-SHA1"
+            $notContainsResults.Count | Should -Be 1
+            $notContainsResults[0].Keys | Should -Be "RC4"
         }
     }
 

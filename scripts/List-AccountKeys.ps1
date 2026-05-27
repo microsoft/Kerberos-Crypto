@@ -180,28 +180,31 @@ function List-AccountKeys {
         [string]$SearchScope = "This"
     )
 
+    $KeyFilter = $null
+    $NotKeyFilter = $null
+
     if ("All" -ne $ContainsKeyType) {
         # translate AES-SHA1 into either
         if ("AES-SHA1" -eq $ContainsKeyType) {
-            $script:KeyFilter = $script:AES_SHA1_FILTER
+            $KeyFilter = $script:AES_SHA1_FILTER
         }
         elseif ("DES" -eq $ContainsKeyType) {
-            $script:KeyFilter = "DES"
+            $KeyFilter = "DES"
         }
         else {
-            $script:KeyFilter = $ContainsKeyType
+            $KeyFilter = $ContainsKeyType
         }
     }
 
     if ("None" -ne $NotContainsKeyType) {
         if ("AES-SHA1" -eq $NotContainsKeyType) {
-            $script:NotKeyFilter = $script:AES_SHA1_FILTER
+            $NotKeyFilter = $script:AES_SHA1_FILTER
         }
-        elseif ("DES" -eq $ContainsKeyType) {
-            $script:NotKeyFilter = "DES"
+        elseif ("DES" -eq $NotContainsKeyType) {
+            $NotKeyFilter = "DES"
         }
         else {
-            $script:NotKeyFilter = $NotContainsKeyType
+            $NotKeyFilter = $NotContainsKeyType
         }
     }
 
@@ -242,15 +245,15 @@ Please install the most recent Windows Updates available for this machine and at
     $accounts | ForEach-Object {
         $KDC = $_.MachineName
         [string]$keys = $_.Properties[16].Value
-        if (-not [string]::IsNullOrEmpty($script:NotKeyFilter)) {
-            if ($keys.Contains($script:NotKeyFilter)) {
-                continue
+        if (-not [string]::IsNullOrEmpty($NotKeyFilter)) {
+            if ($keys.Contains($NotKeyFilter)) {
+                return
             }
         }
 
-        if (-not [string]::IsNullOrEmpty($script:KeyFilter)) {
-            if (-not $keys.Contains($script:KeyFilter)) {
-                continue
+        if (-not [string]::IsNullOrEmpty($KeyFilter)) {
+            if (-not $keys.Contains($KeyFilter)) {
+                return
             }
         }
 
