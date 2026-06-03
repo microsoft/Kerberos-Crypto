@@ -4,6 +4,10 @@ This repository is maintained by the Windows Kerberos team and is intended as a 
 
 The utilities should be treated as useful utilities for building a security strategy regarding Kerberos crypto configuration and not explicit recommendations.
 
+## Documentation
+
+- [docs/](docs/README.md) — Guides and reference material (DES detection, etc.)
+
 ## Live Pages
 
 - [Kerberos EType Calculator: An interactive calculator for determining etype selection](https://microsoft.github.io/Kerberos-Crypto/pages/etype-calc.html)
